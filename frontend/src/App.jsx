@@ -1,11 +1,13 @@
-import HomePage from './pages/HomePage';
+import ListPage from './pages/ListPage';
+import NavBar from './components/NavBar';
 
 function App() {
-  return (
-      <div>
-        <HomePage />
-      </div>
-  );
+    return (
+        <div>
+            <NavBar />
+            <ListPage />
+        </div>
+    );
 }
 
 export default App;
