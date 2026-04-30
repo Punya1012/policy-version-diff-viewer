@@ -52,4 +52,8 @@ public class PolicyVersionController {
             @RequestParam String q) {
         return ResponseEntity.ok(service.searchPolicies(q));
     }
+    @GetMapping("/stats")
+    public ResponseEntity<java.util.Map<String, Object>> getStats() {
+        return ResponseEntity.ok(service.getStats());
+    }
 }

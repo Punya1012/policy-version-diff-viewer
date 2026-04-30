@@ -121,8 +121,25 @@ const ListPage = ({ onCreateNew, onEdit }) => {
                             <tbody className="bg-white divide-y divide-gray-200">
                             {policies.map((policy) => (
                                 <tr key={policy.id} className="hover:bg-gray-50">
-                                    <td className="px-6 py-4 text-sm text-gray-900">
-                                        {policy.id}
+                                    <td className="px-6 py-4 text-sm">
+                                        <button
+                                            onClick={() => onViewDetail(policy.id)}
+                                            className="px-3 py-1 bg-blue-500 text-white rounded hover:bg-blue-600 mr-2"
+                                        >
+                                            View
+                                        </button>
+                                        <button
+                                            onClick={() => onEdit(policy.id)}
+                                            className="px-3 py-1 bg-yellow-500 text-white rounded hover:bg-yellow-600 mr-2"
+                                        >
+                                            Edit
+                                        </button>
+                                        <button
+                                            onClick={() => handleDelete(policy.id)}
+                                            className="px-3 py-1 bg-red-500 text-white rounded hover:bg-red-600"
+                                        >
+                                            Delete
+                                        </button>
                                     </td>
                                     <td className="px-6 py-4 text-sm text-gray-900">
                                         {policy.title}

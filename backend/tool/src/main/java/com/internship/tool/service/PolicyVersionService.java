@@ -47,4 +47,12 @@ public class PolicyVersionService {
     public List<PolicyVersion> searchPolicies(String query) {
         return repository.searchPolicies(query);
     }
+    public java.util.Map<String, Object> getStats() {
+        java.util.Map<String, Object> stats = new java.util.HashMap<>();
+        stats.put("total", repository.countByIsDeletedFalse());
+        stats.put("active", repository.countByStatusAndIsDeletedFalse("ACTIVE"));
+        stats.put("draft", repository.countByStatusAndIsDeletedFalse("DRAFT"));
+        stats.put("inactive", repository.countByStatusAndIsDeletedFalse("INACTIVE"));
+        return stats;
+    }
 }

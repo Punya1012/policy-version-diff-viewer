@@ -3,12 +3,15 @@ import { AuthProvider, useAuth } from './context/AuthContext';
 import ListPage from './pages/ListPage';
 import FormPage from './pages/FormPage';
 import LoginPage from './pages/LoginPage';
+import DashboardPage from './pages/DashboardPage';
+import DetailPage from './pages/DetailPage';
 import NavBar from './components/NavBar';
 
 const AppContent = () => {
     const { isAuthenticated, login } = useAuth();
-    const [currentPage, setCurrentPage] = useState('list');
+    const [currentPage, setCurrentPage] = useState('dashboard');
     const [editId, setEditId] = useState(null);
+    const [detailId, setDetailId] = useState(null);
 
     const goToCreate = () => {
         setEditId(null);
@@ -20,8 +23,17 @@ const AppContent = () => {
         setCurrentPage('form');
     };
 
+    const goToDetail = (id) => {
+        setDetailId(id);
+        setCurrentPage('detail');
+    };
+
     const goToList = () => {
         setCurrentPage('list');
+    };
+
+    const handleNavigate = (page) => {
+        setCurrentPage(page);
     };
 
     if (!isAuthenticated) {
@@ -30,11 +42,18 @@ const AppContent = () => {
 
     return (
         <div>
-            <NavBar />
+            <NavBar
+                onNavigate={handleNavigate}
+                currentPage={currentPage}
+            />
+            {currentPage === 'dashboard' && (
+                <DashboardPage />
+            )}
             {currentPage === 'list' && (
                 <ListPage
                     onCreateNew={goToCreate}
                     onEdit={goToEdit}
+                    onViewDetail={goToDetail}
                 />
             )}
             {currentPage === 'form' && (
@@ -42,6 +61,13 @@ const AppContent = () => {
                     policyId={editId}
                     onSuccess={goToList}
                     onCancel={goToList}
+                />
+            )}
+            {currentPage === 'detail' && (
+                <DetailPage
+                    policyId={detailId}
+                    onEdit={goToEdit}
+                    onBack={goToList}
                 />
             )}
         </div>

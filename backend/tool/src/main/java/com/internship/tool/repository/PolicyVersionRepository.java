@@ -19,4 +19,8 @@ public interface PolicyVersionRepository
             "(LOWER(p.title) LIKE LOWER(CONCAT('%', :query, '%')) OR " +
             "LOWER(p.status) LIKE LOWER(CONCAT('%', :query, '%')))")
     List<PolicyVersion> searchPolicies(@Param("query") String query);
+
+    long countByIsDeletedFalse();
+
+    long countByStatusAndIsDeletedFalse(String status);
 }
