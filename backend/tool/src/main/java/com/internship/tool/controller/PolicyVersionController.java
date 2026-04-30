@@ -15,6 +15,7 @@ import java.util.List;
 public class PolicyVersionController {
 
     private final PolicyVersionService service;
+    private final com.internship.tool.repository.AuditLogRepository auditLogRepository;
 
     @GetMapping
     public ResponseEntity<List<PolicyVersion>> getAll() {
@@ -55,5 +56,11 @@ public class PolicyVersionController {
     @GetMapping("/stats")
     public ResponseEntity<java.util.Map<String, Object>> getStats() {
         return ResponseEntity.ok(service.getStats());
+    }
+    @GetMapping("/audit-logs")
+    public ResponseEntity<java.util.List<com.internship.tool.entity.AuditLog>> getAuditLogs() {
+        return ResponseEntity.ok(
+                auditLogRepository.findTop10ByOrderByPerformedAtDesc()
+        );
     }
 }

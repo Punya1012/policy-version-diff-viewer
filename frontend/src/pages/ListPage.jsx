@@ -1,29 +1,53 @@
 import { useState, useEffect } from 'react';
 import api from '../services/api';
+import SearchBar from '../components/SearchBar';
 
-const ListPage = ({ onCreateNew, onEdit }) => {
+const ListPage = ({ onCreateNew, onEdit, onViewDetail }) => {
     const [policies, setPolicies] = useState([]);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
     const [currentPage, setCurrentPage] = useState(0);
     const [totalPages, setTotalPages] = useState(0);
+    const [searchTerm, setSearchTerm] = useState('');
+    const [statusFilter, setStatusFilter] = useState('');
     const pageSize = 5;
 
     useEffect(() => {
-        fetchPolicies(currentPage);
-    }, [currentPage]);
+        fetchPolicies();
+    }, [currentPage, searchTerm, statusFilter]);
 
-    const fetchPolicies = async (page) => {
+    const fetchPolicies = async () => {
         try {
             setLoading(true);
-            const response = await api.get(
-                `/api/policy-versions?page=${page}&size=${pageSize}`
-            );
-            if (response.data.content) {
-                setPolicies(response.data.content);
-                setTotalPages(response.data.totalPages);
+            let response;
+            if (searchTerm) {
+                response = await api.get(
+                    `/api/policy-versions/search?q=${searchTerm}`
+                );
+                let data = response.data;
+                if (statusFilter) {
+                    data = data.filter(p => p.status === statusFilter);
+                }
+                setPolicies(data);
+                setTotalPages(1);
             } else {
-                setPolicies(response.data);
+                response = await api.get(
+                    `/api/policy-versions?page=${currentPage}&size=${pageSize}`
+                );
+                if (response.data.content) {
+                    let data = response.data.content;
+                    if (statusFilter) {
+                        data = data.filter(p => p.status === statusFilter);
+                    }
+                    setPolicies(data);
+                    setTotalPages(response.data.totalPages);
+                } else {
+                    let data = response.data;
+                    if (statusFilter) {
+                        data = data.filter(p => p.status === statusFilter);
+                    }
+                    setPolicies(data);
+                }
             }
         } catch (err) {
             setError('Failed to load data');
@@ -36,11 +60,25 @@ const ListPage = ({ onCreateNew, onEdit }) => {
         if (window.confirm('Are you sure?')) {
             try {
                 await api.delete(`/api/policy-versions/${id}`);
-                fetchPolicies(currentPage);
+                fetchPolicies();
             } catch (err) {
                 alert('Failed to delete policy');
             }
         }
+    };
+
+    const handleSearch = (term) => {
+        setSearchTerm(term);
+        setCurrentPage(0);
+    };
+
+    const handleStatusChange = (status) => {
+        setStatusFilter(status);
+        setCurrentPage(0);
+    };
+
+    const handleDateChange = (start, end) => {
+        setCurrentPage(0);
     };
 
     if (loading) {
@@ -61,7 +99,7 @@ const ListPage = ({ onCreateNew, onEdit }) => {
                 <div className="text-center text-red-500">
                     <p className="text-xl">{error}</p>
                     <button
-                        onClick={() => fetchPolicies(0)}
+                        onClick={fetchPolicies}
                         className="mt-4 px-4 py-2 bg-blue-600 text-white rounded"
                     >
                         Try Again
@@ -85,11 +123,18 @@ const ListPage = ({ onCreateNew, onEdit }) => {
                 </button>
             </div>
 
+            {/* Search Bar */}
+            <SearchBar
+                onSearch={handleSearch}
+                onStatusChange={handleStatusChange}
+                onDateChange={handleDateChange}
+            />
+
             {policies.length === 0 ? (
-                <div className="text-center py-12">
+                <div className="text-center py-12 bg-white rounded-lg shadow">
                     <p className="text-xl text-gray-500">No policies found</p>
                     <p className="text-gray-400 mt-2">
-                        Create your first policy to get started
+                        Try different search terms or clear filters
                     </p>
                 </div>
             ) : (
@@ -121,25 +166,8 @@ const ListPage = ({ onCreateNew, onEdit }) => {
                             <tbody className="bg-white divide-y divide-gray-200">
                             {policies.map((policy) => (
                                 <tr key={policy.id} className="hover:bg-gray-50">
-                                    <td className="px-6 py-4 text-sm">
-                                        <button
-                                            onClick={() => onViewDetail(policy.id)}
-                                            className="px-3 py-1 bg-blue-500 text-white rounded hover:bg-blue-600 mr-2"
-                                        >
-                                            View
-                                        </button>
-                                        <button
-                                            onClick={() => onEdit(policy.id)}
-                                            className="px-3 py-1 bg-yellow-500 text-white rounded hover:bg-yellow-600 mr-2"
-                                        >
-                                            Edit
-                                        </button>
-                                        <button
-                                            onClick={() => handleDelete(policy.id)}
-                                            className="px-3 py-1 bg-red-500 text-white rounded hover:bg-red-600"
-                                        >
-                                            Delete
-                                        </button>
+                                    <td className="px-6 py-4 text-sm text-gray-900">
+                                        {policy.id}
                                     </td>
                                     <td className="px-6 py-4 text-sm text-gray-900">
                                         {policy.title}
@@ -162,6 +190,12 @@ const ListPage = ({ onCreateNew, onEdit }) => {
                                         {policy.createdBy}
                                     </td>
                                     <td className="px-6 py-4 text-sm">
+                                        <button
+                                            onClick={() => onViewDetail(policy.id)}
+                                            className="px-3 py-1 bg-blue-500 text-white rounded hover:bg-blue-600 mr-2"
+                                        >
+                                            View
+                                        </button>
                                         <button
                                             onClick={() => onEdit(policy.id)}
                                             className="px-3 py-1 bg-yellow-500 text-white rounded hover:bg-yellow-600 mr-2"
