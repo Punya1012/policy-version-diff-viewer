@@ -1,9 +1,12 @@
 import { useState } from 'react';
+import { AuthProvider, useAuth } from './context/AuthContext';
 import ListPage from './pages/ListPage';
 import FormPage from './pages/FormPage';
+import LoginPage from './pages/LoginPage';
 import NavBar from './components/NavBar';
 
-function App() {
+const AppContent = () => {
+    const { isAuthenticated, login } = useAuth();
     const [currentPage, setCurrentPage] = useState('list');
     const [editId, setEditId] = useState(null);
 
@@ -20,6 +23,10 @@ function App() {
     const goToList = () => {
         setCurrentPage('list');
     };
+
+    if (!isAuthenticated) {
+        return <LoginPage onLogin={login} />;
+    }
 
     return (
         <div>
@@ -38,6 +45,14 @@ function App() {
                 />
             )}
         </div>
+    );
+};
+
+function App() {
+    return (
+        <AuthProvider>
+            <AppContent />
+        </AuthProvider>
     );
 }
 
