@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
 import api from '../services/api';
 
-const ListPage = () => {
+const ListPage = ({ onCreateNew, onEdit }) => {
     const [policies, setPolicies] = useState([]);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
@@ -22,7 +22,17 @@ const ListPage = () => {
         }
     };
 
-    // Loading state
+    const handleDelete = async (id) => {
+        if (window.confirm('Are you sure you want to delete this policy?')) {
+            try {
+                await api.delete(`/api/policy-versions/${id}`);
+                fetchPolicies();
+            } catch (err) {
+                alert('Failed to delete policy');
+            }
+        }
+    };
+
     if (loading) {
         return (
             <div className="flex items-center justify-center h-screen">
@@ -35,7 +45,6 @@ const ListPage = () => {
         );
     }
 
-    // Error state
     if (error) {
         return (
             <div className="flex items-center justify-center h-screen">
@@ -52,32 +61,45 @@ const ListPage = () => {
         );
     }
 
-    // Empty state
     if (policies.length === 0) {
         return (
-            <div className="flex items-center justify-center h-screen">
-                <div className="text-center">
-                    <p className="text-xl text-gray-500">No policies found</p>
-                    <p className="text-gray-400 mt-2">
-                        Create your first policy to get started
-                    </p>
+            <div className="container mx-auto p-6">
+                <div className="flex justify-between items-center mb-6">
+                    <h1 className="text-2xl font-bold text-gray-800">
+                        Policy Versions
+                    </h1>
+                    <button
+                        onClick={onCreateNew}
+                        className="px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700"
+                    >
+                        + Add New Policy
+                    </button>
+                </div>
+                <div className="flex items-center justify-center h-64">
+                    <div className="text-center">
+                        <p className="text-xl text-gray-500">No policies found</p>
+                        <p className="text-gray-400 mt-2">
+                            Create your first policy to get started
+                        </p>
+                    </div>
                 </div>
             </div>
         );
     }
 
-    // Table with data
     return (
         <div className="container mx-auto p-6">
             <div className="flex justify-between items-center mb-6">
                 <h1 className="text-2xl font-bold text-gray-800">
                     Policy Versions
                 </h1>
-                <button className="px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700">
+                <button
+                    onClick={onCreateNew}
+                    className="px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700"
+                >
                     + Add New Policy
                 </button>
             </div>
-
             <div className="bg-white shadow rounded-lg overflow-hidden">
                 <table className="min-w-full divide-y divide-gray-200">
                     <thead className="bg-gray-50">
@@ -98,7 +120,7 @@ const ListPage = () => {
                             Created By
                         </th>
                         <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">
-                            Created At
+                            Actions
                         </th>
                     </tr>
                     </thead>
@@ -128,8 +150,19 @@ const ListPage = () => {
                             <td className="px-6 py-4 text-sm text-gray-900">
                                 {policy.createdBy}
                             </td>
-                            <td className="px-6 py-4 text-sm text-gray-900">
-                                {new Date(policy.createdAt).toLocaleDateString()}
+                            <td className="px-6 py-4 text-sm">
+                                <button
+                                    onClick={() => onEdit(policy.id)}
+                                    className="px-3 py-1 bg-yellow-500 text-white rounded hover:bg-yellow-600 mr-2"
+                                >
+                                    Edit
+                                </button>
+                                <button
+                                    onClick={() => handleDelete(policy.id)}
+                                    className="px-3 py-1 bg-red-500 text-white rounded hover:bg-red-600"
+                                >
+                                    Delete
+                                </button>
                             </td>
                         </tr>
                     ))}
