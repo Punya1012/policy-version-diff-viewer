@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react';
 import api from '../services/api';
+import AiPanel from '../components/AiPanel';
 
 const DetailPage = ({ policyId, onEdit, onBack }) => {
     const [policy, setPolicy] = useState(null);
@@ -50,13 +51,19 @@ const DetailPage = ({ policyId, onEdit, onBack }) => {
             DRAFT: { score: 'B', color: 'bg-yellow-500' },
             INACTIVE: { score: 'C', color: 'bg-red-500' },
         };
-        return scores[status] || { score: 'N/A', color: 'bg-gray-500' };
+        return scores[status] ||
+            { score: 'N/A', color: 'bg-gray-500' };
     };
 
     if (loading) {
         return (
             <div className="flex items-center justify-center h-screen">
-                <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600">
+                <div className="text-center">
+                    <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600 mx-auto">
+                    </div>
+                    <p className="mt-4 text-gray-600">
+                        Loading policy details...
+                    </p>
                 </div>
             </div>
         );
@@ -66,7 +73,7 @@ const DetailPage = ({ policyId, onEdit, onBack }) => {
         return (
             <div className="flex items-center justify-center h-screen">
                 <div className="text-center text-red-500">
-                    <p>{error}</p>
+                    <p className="text-xl">{error}</p>
                     <button
                         onClick={onBack}
                         className="mt-4 px-4 py-2 bg-blue-600 text-white rounded"
@@ -91,6 +98,7 @@ const DetailPage = ({ policyId, onEdit, onBack }) => {
                 ← Back to List
             </button>
 
+            {/* Main Policy Card */}
             <div className="bg-white shadow rounded-lg overflow-hidden">
 
                 {/* Header */}
@@ -138,7 +146,8 @@ const DetailPage = ({ policyId, onEdit, onBack }) => {
                             </p>
                             <p className="mt-1 text-gray-800">
                                 {policy.createdAt
-                                    ? new Date(policy.createdAt).toLocaleDateString()
+                                    ? new Date(policy.createdAt)
+                                        .toLocaleDateString()
                                     : 'N/A'}
                             </p>
                         </div>
@@ -149,7 +158,8 @@ const DetailPage = ({ policyId, onEdit, onBack }) => {
                             </p>
                             <p className="mt-1 text-gray-800">
                                 {policy.updatedAt
-                                    ? new Date(policy.updatedAt).toLocaleDateString()
+                                    ? new Date(policy.updatedAt)
+                                        .toLocaleDateString()
                                     : 'N/A'}
                             </p>
                         </div>
@@ -190,6 +200,13 @@ const DetailPage = ({ policyId, onEdit, onBack }) => {
                     </div>
                 </div>
             </div>
+
+            {/* AI Panel — below main card */}
+            <AiPanel
+                policyId={policyId}
+                policyTitle={policy.title}
+            />
+
         </div>
     );
 };

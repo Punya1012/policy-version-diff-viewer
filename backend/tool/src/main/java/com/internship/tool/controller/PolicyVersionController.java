@@ -63,4 +63,11 @@ public class PolicyVersionController {
                 auditLogRepository.findTop10ByOrderByPerformedAtDesc()
         );
     }
+    @ExceptionHandler(RuntimeException.class)
+    public ResponseEntity<String> handleRuntimeException(
+            RuntimeException ex) {
+        return ResponseEntity
+                .status(500)
+                .body(ex.getMessage());
+    }
 }
