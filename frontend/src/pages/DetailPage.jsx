@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
 import api from '../services/api';
 import AiPanel from '../components/AiPanel';
+import FileUpload from '../components/FileUpload';
 
 const DetailPage = ({ policyId, onEdit, onBack }) => {
     const [policy, setPolicy] = useState(null);
@@ -26,9 +27,13 @@ const DetailPage = ({ policyId, onEdit, onBack }) => {
     };
 
     const handleDelete = async () => {
-        if (window.confirm('Are you sure you want to delete?')) {
+        if (window.confirm(
+            'Are you sure you want to delete this policy?'
+        )) {
             try {
-                await api.delete(`/api/policy-versions/${policyId}`);
+                await api.delete(
+                    `/api/policy-versions/${policyId}`
+                );
                 onBack();
             } catch (err) {
                 alert('Failed to delete policy');
@@ -90,10 +95,10 @@ const DetailPage = ({ policyId, onEdit, onBack }) => {
     return (
         <div className="container mx-auto p-6 max-w-3xl">
 
-            {/* Back button */}
+            {/* Back Button */}
             <button
                 onClick={onBack}
-                className="mb-6 flex items-center text-blue-600 hover:text-blue-800"
+                className="mb-6 flex items-center text-blue-600 hover:text-blue-800 font-medium"
             >
                 ← Back to List
             </button>
@@ -118,33 +123,36 @@ const DetailPage = ({ policyId, onEdit, onBack }) => {
                     </div>
                 </div>
 
-                {/* Details */}
+                {/* Policy Details */}
                 <div className="p-6">
                     <div className="grid grid-cols-2 gap-6 mb-6">
 
+                        {/* Status */}
                         <div>
-                            <p className="text-sm text-gray-500 font-medium">
+                            <p className="text-sm text-gray-500 font-medium mb-1">
                                 Status
                             </p>
-                            <span className={`mt-1 inline-block px-3 py-1 rounded-full text-sm font-medium ${getStatusBadge(policy.status)}`}>
+                            <span className={`inline-block px-3 py-1 rounded-full text-sm font-medium ${getStatusBadge(policy.status)}`}>
                 {policy.status}
               </span>
                         </div>
 
+                        {/* Created By */}
                         <div>
-                            <p className="text-sm text-gray-500 font-medium">
+                            <p className="text-sm text-gray-500 font-medium mb-1">
                                 Created By
                             </p>
-                            <p className="mt-1 text-gray-800 font-medium">
+                            <p className="text-gray-800 font-medium">
                                 {policy.createdBy}
                             </p>
                         </div>
 
+                        {/* Created At */}
                         <div>
-                            <p className="text-sm text-gray-500 font-medium">
+                            <p className="text-sm text-gray-500 font-medium mb-1">
                                 Created At
                             </p>
-                            <p className="mt-1 text-gray-800">
+                            <p className="text-gray-800">
                                 {policy.createdAt
                                     ? new Date(policy.createdAt)
                                         .toLocaleDateString()
@@ -152,11 +160,12 @@ const DetailPage = ({ policyId, onEdit, onBack }) => {
                             </p>
                         </div>
 
+                        {/* Last Updated */}
                         <div>
-                            <p className="text-sm text-gray-500 font-medium">
+                            <p className="text-sm text-gray-500 font-medium mb-1">
                                 Last Updated
                             </p>
-                            <p className="mt-1 text-gray-800">
+                            <p className="text-gray-800">
                                 {policy.updatedAt
                                     ? new Date(policy.updatedAt)
                                         .toLocaleDateString()
@@ -171,7 +180,7 @@ const DetailPage = ({ policyId, onEdit, onBack }) => {
                             <p className="text-sm text-gray-500 font-medium mb-2">
                                 Content
                             </p>
-                            <div className="bg-gray-50 rounded p-4 text-gray-700">
+                            <div className="bg-gray-50 rounded-lg p-4 text-gray-700 leading-relaxed">
                                 {policy.content}
                             </div>
                         </div>
@@ -183,13 +192,13 @@ const DetailPage = ({ policyId, onEdit, onBack }) => {
                             onClick={() => onEdit(policy.id)}
                             className="px-6 py-2 bg-yellow-500 text-white rounded hover:bg-yellow-600 font-medium"
                         >
-                            Edit Policy
+                            ✏️ Edit Policy
                         </button>
                         <button
                             onClick={handleDelete}
                             className="px-6 py-2 bg-red-500 text-white rounded hover:bg-red-600 font-medium"
                         >
-                            Delete Policy
+                            🗑️ Delete Policy
                         </button>
                         <button
                             onClick={onBack}
@@ -201,11 +210,14 @@ const DetailPage = ({ policyId, onEdit, onBack }) => {
                 </div>
             </div>
 
-            {/* AI Panel — below main card */}
+            {/* AI Panel */}
             <AiPanel
                 policyId={policyId}
                 policyTitle={policy.title}
             />
+
+            {/* File Upload */}
+            <FileUpload />
 
         </div>
     );

@@ -81,13 +81,35 @@ const ListPage = ({ onCreateNew, onEdit, onViewDetail }) => {
         setCurrentPage(0);
     };
 
+    const handleExportCsv = async () => {
+        try {
+            const response = await api.get(
+                '/api/policy-versions/export',
+                { responseType: 'blob' }
+            );
+            const url = window.URL.createObjectURL(
+                new Blob([response.data])
+            );
+            const link = document.createElement('a');
+            link.href = url;
+            link.setAttribute('download', 'policies.csv');
+            document.body.appendChild(link);
+            link.click();
+            link.remove();
+        } catch (err) {
+            alert('Failed to export CSV');
+        }
+    };
+
     if (loading) {
         return (
             <div className="flex items-center justify-center h-screen">
                 <div className="text-center">
                     <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600 mx-auto">
                     </div>
-                    <p className="mt-4 text-gray-600">Loading policies...</p>
+                    <p className="mt-4 text-gray-600">
+                        Loading policies...
+                    </p>
                 </div>
             </div>
         );
@@ -111,16 +133,26 @@ const ListPage = ({ onCreateNew, onEdit, onViewDetail }) => {
 
     return (
         <div className="container mx-auto p-6">
+
+            {/* Header */}
             <div className="flex justify-between items-center mb-6">
                 <h1 className="text-2xl font-bold text-gray-800">
                     Policy Versions
                 </h1>
-                <button
-                    onClick={onCreateNew}
-                    className="px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700"
-                >
-                    + Add New Policy
-                </button>
+                <div className="flex gap-3">
+                    <button
+                        onClick={handleExportCsv}
+                        className="px-4 py-2 bg-green-600 text-white rounded hover:bg-green-700"
+                    >
+                        📥 Export CSV
+                    </button>
+                    <button
+                        onClick={onCreateNew}
+                        className="px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700"
+                    >
+                        + Add New Policy
+                    </button>
+                </div>
             </div>
 
             {/* Search Bar */}
@@ -130,15 +162,19 @@ const ListPage = ({ onCreateNew, onEdit, onViewDetail }) => {
                 onDateChange={handleDateChange}
             />
 
+            {/* Empty State */}
             {policies.length === 0 ? (
                 <div className="text-center py-12 bg-white rounded-lg shadow">
-                    <p className="text-xl text-gray-500">No policies found</p>
+                    <p className="text-xl text-gray-500">
+                        No policies found
+                    </p>
                     <p className="text-gray-400 mt-2">
                         Try different search terms or clear filters
                     </p>
                 </div>
             ) : (
                 <>
+                    {/* Table */}
                     <div className="bg-white shadow rounded-lg overflow-hidden">
                         <table className="min-w-full divide-y divide-gray-200">
                             <thead className="bg-gray-50">
@@ -165,7 +201,10 @@ const ListPage = ({ onCreateNew, onEdit, onViewDetail }) => {
                             </thead>
                             <tbody className="bg-white divide-y divide-gray-200">
                             {policies.map((policy) => (
-                                <tr key={policy.id} className="hover:bg-gray-50">
+                                <tr
+                                    key={policy.id}
+                                    className="hover:bg-gray-50"
+                                >
                                     <td className="px-6 py-4 text-sm text-gray-900">
                                         {policy.id}
                                     </td>
@@ -219,7 +258,8 @@ const ListPage = ({ onCreateNew, onEdit, onViewDetail }) => {
                     {totalPages > 1 && (
                         <div className="flex justify-center mt-6 gap-2">
                             <button
-                                onClick={() => setCurrentPage(p => Math.max(0, p - 1))}
+                                onClick={() =>
+                                    setCurrentPage(p => Math.max(0, p - 1))}
                                 disabled={currentPage === 0}
                                 className="px-4 py-2 bg-gray-200 rounded hover:bg-gray-300 disabled:opacity-50"
                             >
@@ -239,8 +279,9 @@ const ListPage = ({ onCreateNew, onEdit, onViewDetail }) => {
                                 </button>
                             ))}
                             <button
-                                onClick={() => setCurrentPage(p =>
-                                    Math.min(totalPages - 1, p + 1))}
+                                onClick={() =>
+                                    setCurrentPage(p =>
+                                        Math.min(totalPages - 1, p + 1))}
                                 disabled={currentPage === totalPages - 1}
                                 className="px-4 py-2 bg-gray-200 rounded hover:bg-gray-300 disabled:opacity-50"
                             >
