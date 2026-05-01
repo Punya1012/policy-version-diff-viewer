@@ -31,6 +31,16 @@ const NavBar = ({ onNavigate, currentPage }) => {
                         Policies
                     </button>
                     <button
+                        onClick={() => onNavigate('analytics')}
+                        className={`px-3 py-1 rounded ${
+                            currentPage === 'analytics'
+                                ? 'bg-white text-blue-600'
+                                : 'text-white hover:text-blue-200'
+                        }`}
+                    >
+                        Analytics
+                    </button>
+                    <button
                         onClick={logout}
                         className="px-4 py-2 bg-white text-blue-600 rounded hover:bg-blue-50 font-medium"
                     >

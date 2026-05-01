@@ -5,6 +5,7 @@ import FormPage from './pages/FormPage';
 import LoginPage from './pages/LoginPage';
 import DashboardPage from './pages/DashboardPage';
 import DetailPage from './pages/DetailPage';
+import AnalyticsPage from './pages/AnalyticsPage';
 import NavBar from './components/NavBar';
 
 const AppContent = () => {
@@ -69,6 +70,9 @@ const AppContent = () => {
                     onEdit={goToEdit}
                     onBack={goToList}
                 />
+            )}
+            {currentPage === 'analytics' && (
+                <AnalyticsPage />
             )}
         </div>
     );

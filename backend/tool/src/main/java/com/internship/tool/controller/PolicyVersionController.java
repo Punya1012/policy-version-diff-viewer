@@ -1,5 +1,6 @@
 package com.internship.tool.controller;
 
+import java.time.LocalDateTime;
 import com.internship.tool.entity.AuditLog;
 import com.internship.tool.entity.PolicyVersion;
 import com.internship.tool.repository.AuditLogRepository;
@@ -164,5 +165,35 @@ public class PolicyVersionController {
         return ResponseEntity
                 .status(500)
                 .body(ex.getMessage());
+    }
+    @Operation(summary = "Get analytics data")
+    @GetMapping("/analytics")
+    public ResponseEntity<Map<String, Object>> getAnalytics(
+            @RequestParam(defaultValue = "30") int days) {
+        List<PolicyVersion> all = service.getAllPolicies();
+        LocalDateTime from = LocalDateTime.now()
+                .minusDays(days);
+
+        Map<String, Object> analytics = new java.util.HashMap<>();
+        analytics.put("total", all.size());
+        analytics.put("active",
+                all.stream()
+                        .filter(p -> "ACTIVE".equals(p.getStatus()))
+                        .count());
+        analytics.put("draft",
+                all.stream()
+                        .filter(p -> "DRAFT".equals(p.getStatus()))
+                        .count());
+        analytics.put("inactive",
+                all.stream()
+                        .filter(p -> "INACTIVE".equals(p.getStatus()))
+                        .count());
+        analytics.put("recent",
+                all.stream()
+                        .filter(p -> p.getCreatedAt() != null &&
+                                p.getCreatedAt().isAfter(from))
+                        .count());
+
+        return ResponseEntity.ok(analytics);
     }
 }
