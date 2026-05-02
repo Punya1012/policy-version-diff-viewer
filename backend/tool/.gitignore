@@ -1,33 +1,31 @@
-HELP.md
+# Environment files — never commit these
+.env
+*.env
+
+# Java build files
 target/
-.mvn/wrapper/maven-wrapper.jar
-!**/src/main/**/target/
-!**/src/test/**/target/
+*.class
+*.jar
 
-### STS ###
-.apt_generated
-.classpath
-.factorypath
-.project
-.settings
-.springBeans
-.sts4-cache
+# Node modules
+node_modules/
 
-### IntelliJ IDEA ###
-.idea
-*.iws
+# Python cache
+__pycache__/
+*.pyc
+
+# AI data
+chroma_data/
+
+# IDE files
+.idea/
 *.iml
-*.ipr
-
-### NetBeans ###
-/nbproject/private/
-/nbbuild/
-/dist/
-/nbdist/
-/.nb-gradle/
-build/
-!**/src/main/**/build/
-!**/src/test/**/build/
-
-### VS Code ###
 .vscode/
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# Log files
+*.log
+logs/

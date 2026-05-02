@@ -11,6 +11,11 @@ import org.springframework.stereotype.Repository;
 import java.util.List;
 
 @Repository
+/**
+ * Repository interface for Policy Version data access.
+ * Extends JpaRepository for standard CRUD operations.
+ */
+@Repository
 public interface PolicyVersionRepository
         extends JpaRepository<PolicyVersion, Long> {
 

@@ -16,6 +16,11 @@ import java.util.Map;
 
 @Service
 @RequiredArgsConstructor
+/**
+ * Service layer for Policy Version business logic.
+ * Handles all data operations and transformations.
+ */
+@Service
 public class PolicyVersionService {
 
     private final PolicyVersionRepository repository;

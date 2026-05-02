@@ -25,6 +25,12 @@ import java.util.Map;
         name = "Policy Version API",
         description = "Endpoints for managing policy versions"
 )
+/**
+ * REST Controller for Policy Version management.
+ * Provides endpoints for CRUD operations,
+ * search, stats, analytics, CSV export and file upload.
+ */
+@RestController
 public class PolicyVersionController {
 
     private final PolicyVersionService service;
