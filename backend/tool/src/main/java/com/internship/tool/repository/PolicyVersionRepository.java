@@ -1,6 +1,8 @@
 package com.internship.tool.repository;
 
 import com.internship.tool.entity.PolicyVersion;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
@@ -14,11 +16,17 @@ public interface PolicyVersionRepository
 
     List<PolicyVersion> findByIsDeletedFalse();
 
+    Page<PolicyVersion> findByIsDeletedFalseOrderByCreatedAtDesc(
+            Pageable pageable
+    );
+
     @Query("SELECT p FROM PolicyVersion p WHERE " +
             "p.isDeleted = false AND " +
-            "(LOWER(p.title) LIKE LOWER(CONCAT('%', :query, '%')) OR " +
-            "LOWER(p.status) LIKE LOWER(CONCAT('%', :query, '%')))")
-    List<PolicyVersion> searchPolicies(@Param("query") String query);
+            "(LOWER(p.title) LIKE LOWER(CONCAT('%',:query,'%')) OR " +
+            "LOWER(p.status) LIKE LOWER(CONCAT('%',:query,'%')))")
+    List<PolicyVersion> searchPolicies(
+            @Param("query") String query
+    );
 
     long countByIsDeletedFalse();
 

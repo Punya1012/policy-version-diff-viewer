@@ -14,7 +14,7 @@ import {
 } from 'recharts';
 import api from '../services/api';
 
-const COLORS = ['#3B82F6', '#10B981', '#F59E0B', '#EF4444'];
+const COLORS = ['#10B981', '#F59E0B', '#EF4444'];
 
 const DashboardPage = () => {
     const [stats, setStats] = useState({
@@ -33,7 +33,9 @@ const DashboardPage = () => {
     const fetchStats = async () => {
         try {
             setLoading(true);
-            const response = await api.get('/api/policy-versions/stats');
+            const response = await api.get(
+                '/api/policy-versions/stats'
+            );
             setStats(response.data);
         } catch (err) {
             setError('Failed to load stats');
@@ -57,11 +59,13 @@ const DashboardPage = () => {
 
     if (loading) {
         return (
-            <div className="flex items-center justify-center h-screen">
+            <div className="flex items-center justify-center min-h-screen">
                 <div className="text-center">
                     <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600 mx-auto">
                     </div>
-                    <p className="mt-4 text-gray-600">Loading dashboard...</p>
+                    <p className="mt-4 text-gray-600">
+                        Loading dashboard...
+                    </p>
                 </div>
             </div>
         );
@@ -69,7 +73,7 @@ const DashboardPage = () => {
 
     if (error) {
         return (
-            <div className="flex items-center justify-center h-screen">
+            <div className="flex items-center justify-center min-h-screen">
                 <div className="text-center text-red-500">
                     <p className="text-xl">{error}</p>
                     <button
@@ -84,100 +88,94 @@ const DashboardPage = () => {
     }
 
     return (
-        <div className="container mx-auto p-6">
-            <h1 className="text-2xl font-bold text-gray-800 mb-6">
+        <div className="container mx-auto px-4 py-6">
+            <h1 className="text-xl md:text-2xl font-bold text-gray-800 mb-6">
                 Dashboard
             </h1>
 
-            {/* 4 KPI Cards */}
-            <div className="grid grid-cols-1 md:grid-cols-4 gap-6 mb-8">
-
-                {/* Total Card */}
-                <div className="bg-white rounded-lg shadow p-6 border-l-4 border-blue-500">
-                    <p className="text-sm text-gray-500 uppercase font-medium">
-                        Total Policies
+            {/* KPI Cards — responsive grid */}
+            <div className="grid grid-cols-2 md:grid-cols-4 gap-3 md:gap-6 mb-8">
+                <div className="bg-white rounded-lg shadow p-4 border-l-4 border-blue-500">
+                    <p className="text-xs text-gray-500 uppercase font-medium">
+                        Total
                     </p>
-                    <p className="text-4xl font-bold text-blue-600 mt-2">
+                    <p className="text-3xl font-bold text-blue-600 mt-1">
                         {stats.total}
                     </p>
-                    <p className="text-sm text-gray-400 mt-1">
+                    <p className="text-xs text-gray-400 mt-1">
                         All versions
                     </p>
                 </div>
-
-                {/* Active Card */}
-                <div className="bg-white rounded-lg shadow p-6 border-l-4 border-green-500">
-                    <p className="text-sm text-gray-500 uppercase font-medium">
+                <div className="bg-white rounded-lg shadow p-4 border-l-4 border-green-500">
+                    <p className="text-xs text-gray-500 uppercase font-medium">
                         Active
                     </p>
-                    <p className="text-4xl font-bold text-green-600 mt-2">
+                    <p className="text-3xl font-bold text-green-600 mt-1">
                         {stats.active}
                     </p>
-                    <p className="text-sm text-gray-400 mt-1">
+                    <p className="text-xs text-gray-400 mt-1">
                         Currently active
                     </p>
                 </div>
-
-                {/* Draft Card */}
-                <div className="bg-white rounded-lg shadow p-6 border-l-4 border-yellow-500">
-                    <p className="text-sm text-gray-500 uppercase font-medium">
+                <div className="bg-white rounded-lg shadow p-4 border-l-4 border-yellow-500">
+                    <p className="text-xs text-gray-500 uppercase font-medium">
                         Draft
                     </p>
-                    <p className="text-4xl font-bold text-yellow-600 mt-2">
+                    <p className="text-3xl font-bold text-yellow-600 mt-1">
                         {stats.draft}
                     </p>
-                    <p className="text-sm text-gray-400 mt-1">
+                    <p className="text-xs text-gray-400 mt-1">
                         In progress
                     </p>
                 </div>
-
-                {/* Inactive Card */}
-                <div className="bg-white rounded-lg shadow p-6 border-l-4 border-red-500">
-                    <p className="text-sm text-gray-500 uppercase font-medium">
+                <div className="bg-white rounded-lg shadow p-4 border-l-4 border-red-500">
+                    <p className="text-xs text-gray-500 uppercase font-medium">
                         Inactive
                     </p>
-                    <p className="text-4xl font-bold text-red-600 mt-2">
+                    <p className="text-3xl font-bold text-red-600 mt-1">
                         {stats.inactive}
                     </p>
-                    <p className="text-sm text-gray-400 mt-1">
+                    <p className="text-xs text-gray-400 mt-1">
                         Deactivated
                     </p>
                 </div>
             </div>
 
-            {/* Charts */}
+            {/* Charts — stack on mobile */}
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-
-                {/* Bar Chart */}
-                <div className="bg-white rounded-lg shadow p-6">
-                    <h2 className="text-lg font-semibold text-gray-700 mb-4">
+                <div className="bg-white rounded-lg shadow p-4 md:p-6">
+                    <h2 className="text-base md:text-lg font-semibold text-gray-700 mb-4">
                         Policy Overview
                     </h2>
-                    <ResponsiveContainer width="100%" height={300}>
+                    <ResponsiveContainer width="100%" height={250}>
                         <BarChart data={barData}>
                             <CartesianGrid strokeDasharray="3 3" />
-                            <XAxis dataKey="name" />
-                            <YAxis />
+                            <XAxis dataKey="name" tick={{ fontSize: 12 }} />
+                            <YAxis tick={{ fontSize: 12 }} />
                             <Tooltip />
-                            <Bar dataKey="value" fill="#3B82F6" radius={[4,4,0,0]}/>
+                            <Bar
+                                dataKey="value"
+                                fill="#3B82F6"
+                                radius={[4, 4, 0, 0]}
+                            />
                         </BarChart>
                     </ResponsiveContainer>
                 </div>
 
-                {/* Pie Chart */}
-                <div className="bg-white rounded-lg shadow p-6">
-                    <h2 className="text-lg font-semibold text-gray-700 mb-4">
+                <div className="bg-white rounded-lg shadow p-4 md:p-6">
+                    <h2 className="text-base md:text-lg font-semibold text-gray-700 mb-4">
                         Status Distribution
                     </h2>
-                    <ResponsiveContainer width="100%" height={300}>
+                    <ResponsiveContainer width="100%" height={250}>
                         <PieChart>
                             <Pie
                                 data={pieData}
                                 cx="50%"
                                 cy="50%"
-                                outerRadius={100}
+                                outerRadius={80}
                                 dataKey="value"
-                                label={({ name, value }) => `${name}: ${value}`}
+                                label={({ name, value }) =>
+                                    `${name}: ${value}`}
                             >
                                 {pieData.map((entry, index) => (
                                     <Cell
